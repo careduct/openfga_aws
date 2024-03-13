@@ -3,8 +3,9 @@
 Welcome to our repository! Here, you'll find all the necessary code to deploy the HTTP endpoint of OpenFGA on AWS Lambda and Amazon RDS. This guide will walk you through the steps to get everything up and running.
 
 ## Overview
+OpenFGA is a versatile and open-source service designed to help developers with access control management. By integrating OpenFGA's HTTP endpoint with AWS API Gateway and Lambda, you can achieve scalable and serverless function execution. Additionally, using Amazon RDS for database management ensures a strong and scalable foundation for handling authorization tasks.
 
-OpenFGA is a flexible, open-source authorization service that enables developers to manage access control. Deploying OpenFGA's HTTP endpoint on AWS Lambda allows for scalable, serverless function execution, while Amazon RDS handles the database management, providing a robust and scalable infrastructure for your authorization needs.
+The process involves creating a Lambda extension that initializes OpenFGA during the cold start, setting up both gRPC and HTTP servers. For every incoming request, the AWS API Gateway directs the request to the server operating on the Lambda extension. This setup facilitates efficient and scalable authorization services.
 
 ## Prerequisites
 
