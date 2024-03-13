@@ -12,26 +12,20 @@ The process involves creating a Lambda extension that initializes OpenFGA during
 Before you begin, make sure you have the following:
 - An AWS account
 - AWS CLI installed and configured
-- Basic knowledge of AWS services (Lambda, RDS, IAM)
+- Basic knowledge of AWS services (Lambda, API Gateway, RDS, IAM)
 - Familiarity with OpenFGA
 
 ## Deployment Steps
 
 1. **Prepare Your AWS Environment:**
-   - Set up an RDS instance for OpenFGA's database needs.
-   - Create an IAM role for Lambda with the necessary permissions.
+   - create a provider.tf file at terraform folder and provide the credentials and regions where you want the infra deployed
 
 2. **Deploy the Lambda Function:**
-   - Clone this repository to your local machine.
-   - Use the AWS CLI or AWS Management Console to create a new Lambda function.
-   - Upload the code from this repository to your Lambda function.
 
-3. **Configure the Environment Variables:**
-   - Set up the necessary environment variables for your Lambda function, including database connection details.
 
-4. **Test Your Deployment:**
-   - Invoke your Lambda function to ensure the HTTP endpoint is working correctly.
-   - Perform any necessary adjustments based on the test results.
+3. **Test Your Deployment:**
+   - As output you will get an url of the API Gateway endpoint, ex: https://z6u4i2vz84.execute-api.eu-central-1.amazonaws.com/openfga
+   - Add 'stores' on the path to get the usable Openfga http API, ex: https://z6u4i2vz74.execute-api.eu-central-1.amazonaws.com/openfga/stores 
 
 ## Additional Resources
 
