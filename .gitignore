@@ -1,6 +1,10 @@
 # Local .terraform directories
 **/.terraform/*
 
+# Local build /bin directories
+**/bin/*
+
+
 # .tfstate files
 *.tfstate
 *.tfstate.*

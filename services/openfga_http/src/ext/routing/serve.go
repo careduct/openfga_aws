@@ -65,6 +65,18 @@ func runFGAServer(ctx context.Context) error {
 	cfg.HTTP.Addr = fmt.Sprintf("127.0.0.1:%d", 4000)
 	//allow GRPc only localy as well
 	cfg.GRPC.Addr = fmt.Sprintf("127.0.0.1:%d", 8081)
+	//get the postgres connection
+	cfg.Datastore.Engine = os.Getenv("OPENFGA_DATASTORE_ENGINE")
+	cfg.Datastore.URI = os.Getenv("OPENFGA_DATASTORE_URI")
+
+	//runt the migrate to create the tables
+	/*mcmd := migrate.NewMigrateCommand()
+	mcmd.Flags().Set("datastore-engine", os.Getenv("OPENFGA_DATASTORE_ENGINE"))
+	mcmd.Flags().Set("datastore-uri", os.Getenv("OPENFGA_DATASTORE_URI"))
+	logrus.Infof("Execute the database start script")
+	mcmd.Execute()
+	logrus.Infof("Start script done")
+	*/
 	if err := cfg.Verify(); err != nil {
 		return err
 	}

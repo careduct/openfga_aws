@@ -19,13 +19,15 @@ Before you begin, make sure you have the following:
 
 1. **Prepare Your AWS Environment:**
    - create a provider.tf file at terraform folder and provide the credentials and regions where you want the infra deployed
+   - run terraform init
 
 2. **Deploy the Lambda Function:**
-
+   - run 'make package' on the services/openfga_http folder
+   - run terraform apply
 
 3. **Test Your Deployment:**
    - As output you will get an url of the API Gateway endpoint, ex: https://z6u4i2vz84.execute-api.eu-central-1.amazonaws.com/openfga
-   - Add 'stores' on the path to get the usable Openfga http API, ex: https://z6u4i2vz74.execute-api.eu-central-1.amazonaws.com/openfga/stores 
+   - Add 'stores' on the path to get the usable Openfga http API, ex: https://z6u4i2vz84.execute-api.eu-central-1.amazonaws.com/openfga/stores 
 
 ## Additional Resources
 
