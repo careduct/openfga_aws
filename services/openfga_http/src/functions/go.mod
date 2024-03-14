@@ -6,7 +6,6 @@ toolchain go1.22.1
 
 require (
 	github.com/aws/aws-lambda-go v1.41.0
-	github.com/openfga/openfga v1.5.0
 	github.com/sirupsen/logrus v1.9.3
 )
 
@@ -92,5 +91,6 @@ require (
 
 require (
 	github.com/awslabs/aws-lambda-go-api-proxy v0.16.1
+	github.com/openfga/openfga v1.5.0
 	golang.org/x/sys v0.17.0 // indirect
 )

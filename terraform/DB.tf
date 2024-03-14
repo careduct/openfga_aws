@@ -32,9 +32,11 @@ resource "aws_db_subnet_group" "fga_subnet_group" {
   }
 }
 
+/*
 data "aws_secretsmanager_secret_version" "rds_secret" {
   secret_id = "/STORER/FGA/RDS"
 }
+*/
 
 resource "aws_security_group" "aurora_sg" {
   name   = "aurora-sg"
@@ -58,8 +60,8 @@ resource "aws_rds_cluster" "aurora_postgres_cluster" {
   skip_final_snapshot         = true
   deletion_protection         = false
   database_name               = "openfga"
-  master_username             = jsondecode(data.aws_secretsmanager_secret_version.rds_secret.secret_string)["username"]
-  master_password             = jsondecode(data.aws_secretsmanager_secret_version.rds_secret.secret_string)["password"]
+  master_username             = jsondecode(aws_secretsmanager_secret_version.fga_rds_db_credentials_version.secret_string)["username"]
+  master_password             = jsondecode(aws_secretsmanager_secret_version.fga_rds_db_credentials_version.secret_string)["password"]
 
   # Enable Performance Insights
   #enable_performance_insights = true

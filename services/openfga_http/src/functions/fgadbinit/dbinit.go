@@ -31,7 +31,7 @@ func HandleLambdaEvent(ctx context.Context, event MyEvent) (MyResponse, error) {
 	mcmd.Execute()
 
 	// Return a response
-	return MyResponse{Message: fmt.Sprintf("Hello, %s!", event.Name)}, nil
+	return MyResponse{Message: fmt.Sprintf("OpenFGA DB initialized, %s!", event.Name)}, nil
 }
 
 func main() {

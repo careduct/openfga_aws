@@ -20,7 +20,7 @@ resource "aws_lambda_function" "stores" {
   environment {
     variables = {
         #this vars will stay on the tfstate->SECURE IT CARREFULY
-      OPENFGA_DATASTORE_URI = "postgres://${jsondecode(data.aws_secretsmanager_secret_version.rds_secret.secret_string)["username"]}:${jsondecode(data.aws_secretsmanager_secret_version.rds_secret.secret_string)["password"]}@${aws_rds_cluster.aurora_postgres_cluster.endpoint}/${aws_rds_cluster.aurora_postgres_cluster.database_name}"
+      OPENFGA_DATASTORE_URI = "postgres://${jsondecode(aws_secretsmanager_secret_version.fga_rds_db_credentials_version.secret_string)["username"]}:${jsondecode(aws_secretsmanager_secret_version.fga_rds_db_credentials_version.secret_string)["password"]}@${aws_rds_cluster.aurora_postgres_cluster.endpoint}/${aws_rds_cluster.aurora_postgres_cluster.database_name}"
       OPENFGA_DATASTORE_ENGINE = "postgres"       
     }
   }
@@ -104,7 +104,7 @@ resource "aws_lambda_function" "fgadbinit" {
   environment {
     variables = {
         #this vars will stay on the tfstate->SECURE IT CARREFULY
-      OPENFGA_DATASTORE_URI = "postgres://${jsondecode(data.aws_secretsmanager_secret_version.rds_secret.secret_string)["username"]}:${jsondecode(data.aws_secretsmanager_secret_version.rds_secret.secret_string)["password"]}@${aws_rds_cluster.aurora_postgres_cluster.endpoint}/${aws_rds_cluster.aurora_postgres_cluster.database_name}"
+      OPENFGA_DATASTORE_URI = "postgres://${jsondecode(aws_secretsmanager_secret_version.fga_rds_db_credentials_version.secret_string)["username"]}:${jsondecode(aws_secretsmanager_secret_version.fga_rds_db_credentials_version.secret_string)["password"]}@${aws_rds_cluster.aurora_postgres_cluster.endpoint}/${aws_rds_cluster.aurora_postgres_cluster.database_name}"
       OPENFGA_DATASTORE_ENGINE = "postgres"       
     }
   }
