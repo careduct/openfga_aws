@@ -11,7 +11,6 @@ import (
 	"syscall"
 	"testing"
 
-	"github.com/openfga/openfga/cmd/migrate"
 	"github.com/openfga/openfga/cmd/run"
 	"github.com/openfga/openfga/pkg/logger"
 )
@@ -58,16 +57,17 @@ func runServer(ctx context.Context) error {
 	cfg.HTTP.Addr = fmt.Sprintf("127.0.0.1:%d", 8080)
 	//allow GRPc only localy as well
 	cfg.GRPC.Addr = fmt.Sprintf("127.0.0.1:%d", 8081)
-	cfg.Datastore.Engine = "postgres"
-	cfg.Datastore.URI = "postgresql://postgres:aGdFrhf42df@localhost:5432/postgres"
+	cfg.Datastore.Engine = "memory"
+	/*
+		cfg.Datastore.URI = "postgresql://postgres:aGdFrhf42df@localhost:5432/postgres"
 
-	cmd := migrate.NewMigrateCommand()
+		cmd := migrate.NewMigrateCommand()
 
-	cmd.Flags().Set("datastore-engine", "postgres")
-	cmd.Flags().Set("datastore-uri", "postgresql://postgres:aGdFrhf42df@localhost:5432/postgres")
+		cmd.Flags().Set("datastore-engine", "postgres")
+		cmd.Flags().Set("datastore-uri", "postgresql://postgres:aGdFrhf42df@localhost:5432/postgres")
 
-	cmd.Execute()
-
+		cmd.Execute()
+	*/
 	if err := cfg.Verify(); err != nil {
 		return err
 	}

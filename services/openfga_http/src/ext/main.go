@@ -52,6 +52,7 @@ func main() {
 	}).Debug("Client registered")
 
 	routing.Start("4000", config)
+
 	// Will block until shutdown event is received or cancelled via the context.
 	processEvents(ctx)
 }

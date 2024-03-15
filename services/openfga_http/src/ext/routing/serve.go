@@ -11,7 +11,6 @@ import (
 
 	"github.com/openfga/openfga/cmd/run"
 	"github.com/openfga/openfga/pkg/logger"
-	"github.com/sirupsen/logrus"
 )
 
 type Config struct {
@@ -25,18 +24,7 @@ func Start(port string, config *Config) {
 
 // Method that responds back with the cached values
 func startHTTPServer(port string, config *Config) {
-	/*
-		r := chi.NewRouter()
-		r.Get("/openfga/{key...}", handleValue(config))
-		r.Post("/openfga/{key...}", handleValue(config))
 
-		logrus.Infof("Starting server on %s", port)
-		err := http.ListenAndServe(fmt.Sprintf(":%s", port), r)
-	*/
-	/* works ok
-	http.Handle("/", responseLogger(http.HandlerFunc(sampleHandler)))
-	http.ListenAndServe(fmt.Sprintf(":%s", port), nil)
-	*/
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
 	go func() {
@@ -69,14 +57,6 @@ func runFGAServer(ctx context.Context) error {
 	cfg.Datastore.Engine = os.Getenv("OPENFGA_DATASTORE_ENGINE")
 	cfg.Datastore.URI = os.Getenv("OPENFGA_DATASTORE_URI")
 
-	//runt the migrate to create the tables
-	/*mcmd := migrate.NewMigrateCommand()
-	mcmd.Flags().Set("datastore-engine", os.Getenv("OPENFGA_DATASTORE_ENGINE"))
-	mcmd.Flags().Set("datastore-uri", os.Getenv("OPENFGA_DATASTORE_URI"))
-	logrus.Infof("Execute the database start script")
-	mcmd.Execute()
-	logrus.Infof("Start script done")
-	*/
 	if err := cfg.Verify(); err != nil {
 		return err
 	}
@@ -84,50 +64,4 @@ func runFGAServer(ctx context.Context) error {
 	logger := logger.MustNewLogger(cfg.Log.Format, "DEBUG", "")
 	serverCtx := &run.ServerContext{Logger: logger}
 	return serverCtx.Run(ctx, cfg)
-}
-
-func sampleHandler(w http.ResponseWriter, r *http.Request) {
-	w.WriteHeader(http.StatusOK)
-	response := []byte("The received path:" + r.URL.Path)
-	w.Write(response)
-}
-
-type loggingResponseWriter struct {
-	status int
-	body   string
-	http.ResponseWriter
-}
-
-func (w *loggingResponseWriter) WriteHeader(code int) {
-	w.status = code
-	w.ResponseWriter.WriteHeader(code)
-}
-
-func (w *loggingResponseWriter) Write(body []byte) (int, error) {
-	w.body = string(body)
-	return w.ResponseWriter.Write(body)
-}
-
-func responseLogger(h http.Handler) http.Handler {
-	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		loggingRW := &loggingResponseWriter{
-			ResponseWriter: w,
-		}
-		h.ServeHTTP(loggingRW, r)
-		log.Println("Status : ", loggingRW.status, "Response : ", loggingRW.body)
-	})
-}
-
-func abcdHandler(w http.ResponseWriter, r *http.Request) {
-	logrus.Infof("Response to /abcd path")
-	fmt.Fprintf(w, "Response to /abcd path")
-}
-
-func handleValue(config *Config) http.HandlerFunc {
-	logrus.Debug("Before Received a request on http server")
-	return func(w http.ResponseWriter, r *http.Request) {
-
-		logrus.Debug("Received a request on http server hhh")
-		w.Write([]byte("Answer from http"))
-	}
 }
