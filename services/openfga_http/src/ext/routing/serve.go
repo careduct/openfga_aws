@@ -53,6 +53,11 @@ func runFGAServer(ctx context.Context) error {
 	cfg.HTTP.Addr = fmt.Sprintf("127.0.0.1:%d", 4000)
 	//allow GRPc only localy as well
 	cfg.GRPC.Addr = fmt.Sprintf("127.0.0.1:%d", 8081)
+	//to speed up disable the playground
+	cfg.Playground.Enabled = false
+	//to speed up disable the metrics server
+	cfg.Metrics.Enabled = false
+
 	//get the postgres connection
 	cfg.Datastore.Engine = os.Getenv("OPENFGA_DATASTORE_ENGINE")
 	cfg.Datastore.URI = os.Getenv("OPENFGA_DATASTORE_URI")
