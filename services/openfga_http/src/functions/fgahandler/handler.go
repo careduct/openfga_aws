@@ -1,9 +1,9 @@
 package main
 
 import (
-	"context"
 	"fmt"
 	"log"
+	"math"
 	"net/http"
 	"net/http/httputil"
 	"net/url"
@@ -23,68 +23,36 @@ type Model struct {
 	FieldTwo string `json:"fieldTwo"`
 }
 
-func waitForHTTPServer(url string, timeout time.Duration) bool {
-	ctx, cancel := context.WithTimeout(context.Background(), timeout)
-	defer cancel()
+func waitForOpenfga(targetUrl string) {
 
-	ticker := time.NewTicker(1 * time.Second) // Retry every second
-	defer ticker.Stop()
+	client := http.Client{
+		Timeout: 10 * time.Second, // Adjust the timeout as needed
+	}
 
-	for {
-		select {
-		case <-ctx.Done():
-			// Timeout reached without receiving a 200 OK
-			return false
-		case <-ticker.C:
-			// Attempt to make a request
-			req, err := http.NewRequestWithContext(ctx, "GET", url, nil)
-			if err != nil {
-				fmt.Println("Error creating request:", err)
-				continue // Try again on the next tick
-			}
+	maxRetries := 10
+	baseRetryInterval := 500 * time.Millisecond // Base time to wait before retries
 
-			client := &http.Client{}
-			resp, err := client.Do(req)
-			if err != nil {
-				fmt.Println("Error making HTTP request:", err)
-				continue // Try again on the next tick
-			}
-			resp.Body.Close() // Close the response body
+	for i := 0; i < maxRetries; i++ {
+		resp, err := client.Get(targetUrl)
+		if err != nil {
+			//fmt.Printf("Attempt #%d: error making GET request: %v\n", i+1, err)
+			sleepDuration := time.Duration(math.Pow(2, float64(i))) * baseRetryInterval
+			//fmt.Printf("Waiting %v before retrying...\n", sleepDuration)
+			time.Sleep(sleepDuration)
+			continue
+		}
 
-			if resp.StatusCode == http.StatusOK || resp.StatusCode == http.StatusNotFound {
-				// The server responded with 200 OK or 404 NOT FOUND
-				return true
-			}
+		defer resp.Body.Close()
+		//fmt.Printf("Attempt #%d: Server responded with status code: %d\n", i+1, resp.StatusCode)
+		if resp.StatusCode == http.StatusOK || resp.StatusCode == http.StatusNotFound {
+			//fmt.Println("Server is up and responded successfully")
+			break
+		} else {
+			sleepDuration := time.Duration(math.Pow(2, float64(i))) * baseRetryInterval
+			//fmt.Printf("Server is not ready, waiting %v before retrying...\n", sleepDuration)
+			time.Sleep(sleepDuration)
 		}
 	}
-}
-
-func waitForOpenfga() int {
-	// Define the URL you want to make a request to
-	url := "http://localhost:4000"
-
-	// Create a context with a timeout of 30 seconds
-	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
-	defer cancel() // It's important to call cancel to avoid leaking resources
-
-	// Create an HTTP request with the context
-	req, err := http.NewRequestWithContext(ctx, "GET", url, nil)
-	if err != nil {
-		fmt.Printf("The OpenFGA didn't started within 10s on the cold start: %v\n", err)
-		return 504
-	}
-
-	// Create an HTTP client and make the request
-	client := &http.Client{}
-	resp, err := client.Do(req)
-	if err != nil {
-		fmt.Printf("The OpenFGA didn't started within 10s on the cold start: %v\n", err)
-		return 504
-	}
-	resp.Body.Close() // Don't forget to close the response body
-
-	//fmt.Printf("Response status code: %d\n", resp.StatusCode)
-	return resp.StatusCode
 }
 
 func main() {
@@ -102,7 +70,7 @@ func main() {
 			panic("Error instantiating the backend openfga on the lambda extension")
 		}
 		*/
-
+		waitForOpenfga(origin.String())
 		//create teh reverse çroxy
 		proxy := httputil.NewSingleHostReverseProxy(origin)
 		r.URL.Path = strings.TrimPrefix(r.URL.Path, "/openfga")
@@ -111,7 +79,7 @@ func main() {
 			log.Fatal(err)
 		}
 		//wait until OpenFGA is ready on a cold start
-		waitForOpenfga()
+
 		proxy.ServeHTTP(w, r)
 		fmt.Printf("Go version: %s\n", runtime.Version())
 	})
