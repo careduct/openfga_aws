@@ -3,9 +3,11 @@
 # !!! The handler is the name of the executable for go1.x runtime!
 resource "aws_lambda_function" "stores" {
   function_name    = "stores"
-  filename         = "${path.module}/../services/openfga_http/src/functions/fgahandler/bin/handler.zip"
-  handler          = "handler"
-  source_code_hash = sha256(filebase64("${path.module}/../services/openfga_http/src/functions/fgahandler/bin/handler.zip"))
+  #filename         = "${path.module}/../services/openfga_http/src/functions/fgahandler/bin/handler.zip"
+  handler          = "bootstrap"
+  #source_code_hash = sha256(filebase64("${path.module}/../services/openfga_http/src/functions/fgahandler/bin/handler.zip"))
+  s3_bucket = "cd-st-cicd-artifacts"
+  s3_key = "storer/fga/main.zip"
   role             = aws_iam_role.stores.arn
   runtime          = "provided.al2023"
   memory_size      = 128
@@ -48,11 +50,12 @@ resource "aws_security_group" "lambda_sg" {
 
 
 resource "aws_lambda_layer_version" "lambda_openfga_layer" {
-  layer_name          = "lambda-openfga-layer"
-  filename            = "${path.module}/../services/openfga_http/src/ext/bin/extension.zip"
-
+  layer_name          = "lambda-cache-layer"
+  #filename            = "${path.module}/../services/openfga_http/src/ext/bin/extension.zip"
+  s3_bucket = "cd-st-cicd-artifacts"
+  s3_key = "storer/fga/main.zip"
   # Optionally, specify compatible runtimes for your layer
-  compatible_runtimes = ["go1.x"]
+  compatible_runtimes = ["provided.al2023"]
 
   # You can also specify a description and license info
   description         = "OpenFGA server extension layer"
@@ -90,9 +93,11 @@ resource "aws_iam_policy_attachment" "lambda_basic_execution" {
 //the db initialization lambda function
 resource "aws_lambda_function" "fgadbinit" {
   function_name    = "fgadbinit"
-  filename         = "${path.module}/../services/openfga_http/src/functions/fgadbinit/bin/handler.zip"
+  #filename         = "${path.module}/../services/openfga_http/src/functions/fgadbinit/bin/handler.zip"
   handler          = "handler"
-  source_code_hash = sha256(filebase64("${path.module}/../services/openfga_http/src/functions/fgadbinit/bin/handler.zip"))
+  #source_code_hash = sha256(filebase64("${path.module}/../services/openfga_http/src/functions/fgadbinit/bin/handler.zip"))
+  s3_bucket = "cd-st-cicd-artifacts"
+  s3_key = "storer/fga/dbinit.zip"
   role             = aws_iam_role.stores.arn
   runtime          = "provided.al2023"
   memory_size      = 128
