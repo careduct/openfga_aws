@@ -1,4 +1,4 @@
-# OpenFGA HTTP Endpoint Deployment on AWS Lambda and Amazon RDS
+# OpenFGA HTTP Endpoint Deployment on AWS Lambda and Amazon Aurora Postgres serverless v2
 
 Welcome to our repository! Here, you'll find all the necessary code to deploy the HTTP endpoint of OpenFGA on AWS Lambda and Amazon RDS. This guide will walk you through the steps to get everything up and running.
 
